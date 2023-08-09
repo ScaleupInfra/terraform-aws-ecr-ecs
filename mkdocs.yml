@@ -1,0 +1,5 @@
+site_name: My Docker
+nav: # navigation bar
+  - Home: index.md
+theme: # to add search bar at the top
+  name: material
