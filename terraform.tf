@@ -8,6 +8,8 @@ terraform {
 
 provider "aws" {
   region     = "ap-northeast-1"
+  access_key = "AKIARQSGNPPR5IMGGBTT"
+  secret_key = "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"
 }
 
 resource "aws_ecr_repository" "my_ecr_repo" {
