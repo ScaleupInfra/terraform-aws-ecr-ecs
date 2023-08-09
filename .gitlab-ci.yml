@@ -9,7 +9,6 @@ stages:
   - validate
   - build
   - deploy
-  - docker
 
 validate:
   extends: .terraform:validate
@@ -21,10 +20,6 @@ terraform_deploy:
   stage: deploy
   script:
     - gitlab-terraform apply -auto-approve
-
-docker_ecr:
-  stage: docker
-  script:
     - aws configure
     - AKIARQSGNPPR5IMGGBTT
     - SZ4VOhZvnYPBhYBSdi9ZKg1gzNl6IyYqXUgsxYcf
