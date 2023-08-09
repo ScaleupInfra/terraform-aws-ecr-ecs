@@ -23,8 +23,8 @@ terraform_deploy:
     - gitlab-terraform apply -auto-approve
 
 
-aws:
-  stage: aws_ec
+aws_:
+  stage: aws_ecr 
   image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
   script:
     - aws configure
@@ -36,7 +36,7 @@ aws:
     - docker build -t mkdocs-containers .
     - docker tag mkdocs-containers:latest 104300641251.dkr.ecr.ap-northeast-1.amazonaws.com/mkdocs-containers:latest
     - docker push 104300641251.dkr.ecr.ap-northeast-1.amazonaws.com/mkdocs-containers:latest
-    
+
 
 
 
