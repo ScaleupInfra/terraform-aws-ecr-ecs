@@ -21,7 +21,6 @@ terraform_deploy:
   stage: deploy
   script:
     - gitlab-terraform apply -auto-approve
-    - AKIARQSGNPPR5IMGGBTT
     - SZ4VOhZvnYPBhYBSdi9ZKg1gzNl6IyYqXUgsxYcf
     - ap-northeast-1
     - json
@@ -36,4 +35,7 @@ aws:
   image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
   script:
     - aws configure
+    - AKIARQSGNPPR5IMGGBTT
+    
+
     
