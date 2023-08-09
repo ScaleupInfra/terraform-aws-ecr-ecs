@@ -21,13 +21,6 @@ terraform_deploy:
   stage: deploy
   script:
     - gitlab-terraform apply -auto-approve
-    - SZ4VOhZvnYPBhYBSdi9ZKg1gzNl6IyYqXUgsxYcf
-    - ap-northeast-1
-    - json
-    - aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin 104300641251.dkr.ecr.ap-northeast-1.amazonaws.com
-    - docker build -t mkdocs-containers .
-    - docker tag mkdocs-containers:latest 104300641251.dkr.ecr.ap-northeast-1.amazonaws.com/mkdocs-containers:latest
-    - docker push 104300641251.dkr.ecr.ap-northeast-1.amazonaws.com/mkdocs-containers:latest
 
 
 aws:
@@ -36,6 +29,22 @@ aws:
   script:
     - aws configure
     - AKIARQSGNPPR5IMGGBTT
+    - SZ4VOhZvnYPBhYBSdi9ZKg1gzNl6IyYqXUgsxYcf
+    - ap-northeast-1
+    - json
+    - aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin 104300641251.dkr.ecr.ap-northeast-1.amazonaws.com
+    - docker build -t mkdocs-containers .
+    - docker tag mkdocs-containers:latest 104300641251.dkr.ecr.ap-northeast-1.amazonaws.com/mkdocs-containers:latest
+    - docker push 104300641251.dkr.ecr.ap-northeast-1.amazonaws.com/mkdocs-containers:latest
     
+
+
+
+
+
+
+
+
+
 
     
