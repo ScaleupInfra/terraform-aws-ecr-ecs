@@ -25,7 +25,10 @@ terraform_deploy:
 
 aws_:
   stage: aws_ecr 
-  image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
+  image: 
+    name: docker:latest
+  services:
+    - docker:19-dind
   before_script:
     - apk add --no-cache curl jq python3 py3-pip
     - pip install awscli
