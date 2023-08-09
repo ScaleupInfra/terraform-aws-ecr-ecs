@@ -1,0 +1,33 @@
+image: docker:stable
+
+variables:
+  TERRAFORM_VERSION: "1.0.8"
+  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+
+before_script:
+  - apk add --update git unzip bash
+  - wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+  - unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+  - mv terraform /usr/local/bin/
+  - export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+  - export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+  - terraform --version
+  - terraform init
+
+stages:
+  - validate
+  - apply
+
+validate:
+  stage: validate
+  script:
+    - echo "Validating Terraform code"
+    - terraform validate
+
+apply:
+  stage: apply
+  script:
+    - echo "Applying Terraform code"
+    - terraform apply -auto-approve -var "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" -var "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
+    - terraform destroy -auto-approve -var "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" -var "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
