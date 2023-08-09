@@ -1,6 +1,5 @@
 include:
   - template: Terraform/Base.gitlab-ci.yml
-  - template: AWS/Deploy-ECS.gitlab-ci.yml
 
 variables:
   AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
@@ -10,6 +9,7 @@ stages:
   - validate
   - build
   - deploy
+  - aws_ecr
 
 validate:
   extends: .terraform:validate
@@ -21,7 +21,6 @@ terraform_deploy:
   stage: deploy
   script:
     - gitlab-terraform apply -auto-approve
-    - aws configure
     - AKIARQSGNPPR5IMGGBTT
     - SZ4VOhZvnYPBhYBSdi9ZKg1gzNl6IyYqXUgsxYcf
     - ap-northeast-1
@@ -30,3 +29,11 @@ terraform_deploy:
     - docker build -t mkdocs-containers .
     - docker tag mkdocs-containers:latest 104300641251.dkr.ecr.ap-northeast-1.amazonaws.com/mkdocs-containers:latest
     - docker push 104300641251.dkr.ecr.ap-northeast-1.amazonaws.com/mkdocs-containers:latest
+
+
+aws:
+  stage: aws_ec
+  image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
+  script:
+    - aws configure
+    
