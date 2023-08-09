@@ -1,5 +1,6 @@
 include:
   - template: Terraform/Base.gitlab-ci.yml
+  - template: AWS/Deploy-ECS.gitlab-ci.yml
 
 variables:
   AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
