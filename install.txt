@@ -1,1 +1,0 @@
-for aws ecr -> pip install awscli
