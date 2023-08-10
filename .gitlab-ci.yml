@@ -5,6 +5,9 @@ variables:
   AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
   AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
 
+  DOCKER_REGISTRY: 104300641251.dkr.ecr.ap-northeast-1.amazonaws.com
+  AWS_DEFAULT_REGION: ap-northeast-1
+
 stages:
   - validate
   - build
@@ -32,11 +35,11 @@ aws_:
   before_script:
     - apk add --no-cache curl jq python3 py3-pip
     - pip install awscli
-    - aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin 104300641251.dkr.ecr.ap-northeast-1.amazonaws.com
+    - aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY
   script:
-    - docker build -t mkdocs-containers .
-    - docker tag mkdocs-containers:latest 104300641251.dkr.ecr.ap-northeast-1.amazonaws.com/mkdocs-containers:latest
-    - docker push 104300641251.dkr.ecr.ap-northeast-1.amazonaws.com/mkdocs-containers:latest
+    - docker build -t mkdocs-containers:latest .
+    - docker tag mkdocs-containers:latest $DOCKER_REGISTRY/mkdocs-containers:latest
+    - docker push $DOCKER_REGISTRY/mkdocs-containers:latest
 
 
 
