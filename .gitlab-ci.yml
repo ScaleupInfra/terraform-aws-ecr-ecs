@@ -25,9 +25,6 @@ terraform_deploy:
   script:
     - gitlab-terraform apply -auto-approve
 
-stages:
-  - aws_ecr
-
 aws_ecr:
   stage: aws_ecr 
   image: 
