@@ -1,0 +1,89 @@
+# apiVersion: tekton.dev/v1beta1
+# kind: Task
+# metadata:
+#   name: terraform-plan-apply-destroy
+# spec:
+#   params:
+#     - name: ARGS
+#       description: The terraform cli commands to run
+#       type: array
+#       default:
+#         - init
+#   steps:
+#     - name: init
+#       image: "docker.io/hashicorp/terraform:light"
+#       command:
+#         - terraform
+#         - init
+
+#     - name: terraform-plan
+#       image: "docker.io/hashicorp/terraform:light"
+#       env:
+#         - name: AWS_ACCESS_KEY_ID
+#           value: AKIARQSGNPPR5IMGGBTT
+#         - name: AWS_SECRET_ACCESS_KEY
+#           value: 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
+#       command:
+#         - terraform
+#         - plan
+
+#     - name: terraform-apply
+#       image: "docker.io/hashicorp/terraform:light"
+#       env:
+#         - name: AWS_ACCESS_KEY_ID
+#           value: AKIARQSGNPPR5IMGGBTT
+#         - name: AWS_SECRET_ACCESS_KEY
+#           value: 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
+#       command:
+#         - terraform
+#         - apply
+#         - "-auto-approve"
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: docker-ecr
+spec:
+  params:
+    - name: ARGS
+      description: docker ecr push
+      type: array
+      default:
+        - init
+      
+  steps:
+    - name: docker-ecr
+      image: 'docker:latest'
+      env:
+        - name: AWS_ACCESS_KEY_ID
+          value: AKIA4EPWUPEGHFUP3J6S
+        - name: AWS_SECRET_ACCESS_KEY
+          value: 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
+        - name:  AWS_DEFAULT_REGION
+          value: ap-northeast-1
+      script: ' apk add --no-cache curl jq python3 py3-pip | pip install awscli |
+                aws configure set aws_access_key_id AKIA4EPWUPEGHFUP3J6S | aws configure set aws_secret_access_key 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 |
+                aws configure set region ap-northeast-1 | aws configure set output_format json 
+                '
+
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: terraform-pipeline-ecr
+spec:
+  tasks:
+    # - name: terraform-plan-apply-destroy
+    #   taskRef:
+    #     name: terraform-plan-apply-destroy
+    - name: docker-ecr
+      taskRef:
+        name: docker-ecr
+---
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: run-terraform-pipeline-ecr
+spec:
+  pipelineRef:
+    name: terraform-pipeline-ecr
