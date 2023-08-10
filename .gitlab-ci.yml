@@ -25,7 +25,7 @@ aws_ecr:
     - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
     - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
     - aws configure set region $AWS_DEFAULT_REGION
-    - aws configure set 
+    - aws configure set output_format json
     - aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin 104300641251.dkr.ecr.ap-northeast-1.amazonaws.com
     - docker build -t mkdocs-containers .
     - docker tag mkdocs-containers:latest 104300641251.dkr.ecr.ap-northeast-1.amazonaws.com/mkdocs-containers:latest
