@@ -9,6 +9,23 @@ variables:
   AWS_DEFAULT_REGION: "ap-northeast-1"
 
 stages:
+  - validate
+  - build
+  - deploy
+  - aws_ecr
+
+validate:
+  extends: .terraform:validate
+
+build:
+  extends: .terraform:build
+
+terraform_deploy:
+  stage: deploy
+  script:
+    - gitlab-terraform apply -auto-approve
+
+stages:
   - aws_ecr
 
 aws_ecr:
