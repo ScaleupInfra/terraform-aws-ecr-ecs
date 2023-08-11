@@ -1,6 +1,6 @@
 FROM squidfunk/mkdocs-material 
 
-WORKDIR /app
+WORKDIR /docs
 
 COPY . .
 
