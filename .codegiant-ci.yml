@@ -1,0 +1,110 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: terraform-plan-apply
+spec:
+  params:
+    - name: ARGS
+      description: The terraform cli commands to run
+      type: array
+      default:
+        - init
+  steps:
+    - name: init
+      image: "docker.io/hashicorp/terraform:light"
+      command:
+        - terraform
+        - init
+
+    - name: terraform-plan
+      image: "docker.io/hashicorp/terraform:light"
+      env:
+        - name: AWS_ACCESS_KEY_ID
+          value: AKIARQSGNPPR5IMGGBTT
+        - name: AWS_SECRET_ACCESS_KEY
+          value: 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
+      command:
+        - terraform
+        - plan
+
+    - name: terraform-apply
+      image: "docker.io/hashicorp/terraform:light"
+      env:
+        - name: AWS_ACCESS_KEY_ID
+          value: AKIARQSGNPPR5IMGGBTT
+        - name: AWS_SECRET_ACCESS_KEY
+          value: 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
+      command:
+        - terraform
+        - apply
+        - "-auto-approve"
+
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: build-and-push-to-ecr
+spec:
+  params:
+    - name: imageName
+      type: string
+    - name: region
+      type: string
+  steps:
+    - name: install-tools
+      image: ubuntu
+      script: |
+        export DEBIAN_FRONTEND=noninteractive
+        ln -fs /usr/share/zoneinfo/Etc/UTC /etc/localtime
+        apt-get update
+        apt-get install -y -qq awscli docker.io
+    - name: ecr-login
+      image: docker:20.10-dind
+      env:
+        - name: AWS_ACCESS_KEY_ID
+          value: AKIARQSGNPPR5IMGGBTT
+        - name: AWS_SECRET_ACCESS_KEY
+          value: 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
+        - name: AWS_DEFAULT_REGION
+          value: $(params.region)
+      script: |
+        apk add --no-cache aws-cli
+        aws ecr get-login-password --region $(params.region) | docker login --username AWS --password-stdin 104300641251.dkr.ecr.$(params.region).amazonaws.com
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: ecr-build-and-push-pipeline
+spec:
+  params:
+    - name: imageName
+      type: string
+    - name: region
+      type: string
+  tasks:
+    - name: build-and-push-to-ecr
+      taskRef:
+        name: build-and-push-to-ecr
+      params:
+        - name: imageName
+          value: $(params.imageName)
+        - name: region
+          value: $(params.region)
+
+---
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: run-ecr-build-and-push-pipeline
+spec:
+  pipelineRef:
+    name: ecr-build-and-push-pipeline
+  params:
+    - name: imageName
+      value: mkdocs
+    - name: region
+      value: ap-northeast-1
+  task:
+    - name: terraform-plan-apply
+      taskRef:
+        name: terraform-plan-apply

@@ -1,0 +1,46 @@
+include:
+  - template: Terraform/Base.gitlab-ci.yml
+
+variables:
+  AWS_ACCESS_KEY_ID: "$AWS_ACCESS_KEY_ID"
+  AWS_SECRET_ACCESS_KEY: "$AWS_SECRET_ACCESS_KEY"
+
+  DOCKER_REGISTRY: "104300641251.dkr.ecr.ap-northeast-1.amazonaws.com"
+  AWS_DEFAULT_REGION: "ap-northeast-1"
+
+stages:
+  - validate
+  - build
+  - deploy
+  - aws_ecr
+
+validate:
+  extends: .terraform:validate
+
+build:
+  extends: .terraform:build
+
+terraform_deploy:
+  stage: deploy
+  script:
+    - gitlab-terraform apply -auto-approve
+
+aws_ecr:
+  stage: aws_ecr 
+  image: 
+    name: docker:latest
+  services:
+    - docker:19-dind
+  before_script:
+    - apk add --no-cache curl jq python3 py3-pip
+    - pip install awscli
+
+  script:
+    - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+    - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+    - aws configure set region $AWS_DEFAULT_REGION
+    - aws configure set output_format json
+    - aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin 104300641251.dkr.ecr.ap-northeast-1.amazonaws.com
+    - docker build -t mkdocs-containers .
+    - docker tag mkdocs-containers:latest 104300641251.dkr.ecr.ap-northeast-1.amazonaws.com/mkdocs-containers:latest
+    - docker push 104300641251.dkr.ecr.ap-northeast-1.amazonaws.com/mkdocs-containers:latest
