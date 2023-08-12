@@ -1,4 +1,4 @@
 *.hcl*
 **.terraform/*
 *tfstate*
-*.txt*
+*.txt
