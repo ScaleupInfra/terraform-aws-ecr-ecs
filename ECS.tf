@@ -9,6 +9,12 @@ resource "aws_iam_role" "full_watch" {
   assume_role_policy = file("${path.module}/roles/policy.json")
 }
 
+data "aws_ecr_image" "service_image" {
+  repository_name = "mkdocuments"
+  image_tag       = "latest"
+}
+
+
 # defining Task for cluster's service
 resource "aws_ecs_task_definition" "mkdocs_task" {
   family                   = "MKDOCS-Family"
@@ -23,7 +29,7 @@ resource "aws_ecs_task_definition" "mkdocs_task" {
   container_definitions = jsonencode([
     {
       name  = "mkdocuments",
-      image = "${aws_ecr_repository.my_ecr_repo.repository_url}:latest",
+      image = "${data.aws_ecr_image.service_image}",
       portMappings = [
         {
           containerPort = 8000,
