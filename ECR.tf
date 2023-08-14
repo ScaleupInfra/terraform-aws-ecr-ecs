@@ -10,8 +10,8 @@ terraform {
 # aws cloud provider
 provider "aws" {
   region     = "ap-northeast-1"
-  access_key = "AKIARQSGNPPRZX4JYSOT"
-  secret_key = "9MMGLaiSmVDXNSHZM9sWdtVj3RKxpWJfdDmsy87W"
+  access_key = "<your_key>"
+  secret_key = "<your_secret>"
 }
 
 # creating ECR repository
